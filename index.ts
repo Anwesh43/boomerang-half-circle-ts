@@ -216,3 +216,25 @@ class BoomerangHalfCircle {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    bhc : BoomerangHalfCircle = new BoomerangHalfCircle()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.bhc.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.bhc.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.bhc.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
