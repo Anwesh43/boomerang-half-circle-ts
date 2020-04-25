@@ -23,6 +23,55 @@ class ScaleUtil {
     }
 }
 
+class DrawingUtil {
+
+    static drawArc(context : CanvasRenderingContext2D, start : number, end : number, r : number) {
+        context.beginPath()
+        for (var i = start; i <= end; i++) {
+            const x : number = r * Math.cos(i * Math.PI / 180)
+            const y : number = r * Math.sin(i * Math.PI / 180)
+            if (i == start) {
+                context.moveTo(x, y)
+            } else {
+                context.lineTo(x, y)
+            }
+        }
+        context.stroke()
+    }
+
+    static drawBoomerangCircle(context : CanvasRenderingContext2D, i : number, scale : number, size : number, w : number) {
+        const sci : number = ScaleUtil.divideScale(scale, i, 2)
+        const sf : number = ScaleUtil.sinify(sci)
+        const sj : number = 1 - 2 * i
+        const x : number = (w / 2) * sj * sf
+        const start : number = -90 + 180 * i
+        const end : number = start + 180
+        context.save()
+        context.translate(x, 0)
+        context.rotate(Math.PI * sf)
+        DrawingUtil.drawArc(context, start, end, size)
+        context.restore()
+    }
+
+    static drawBoomerangCircles(context : CanvasRenderingContext2D, scale : number, size : number, w : number) {
+        for (var i = 0; i < 2; i++) {
+            DrawingUtil.drawBoomerangCircle(context, i, scale, size, w)
+        }
+    }
+
+    static drawBCNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        context.strokeStyle = foreColor
+        context.lineWidth = Math.min(w, h) / strokeFactor
+        context.lineCap = 'round'
+        const gap : number = h / (nodes + 1)
+        const size : number = gap / sizeFactor
+        context.save()
+        context.translate(w / 2, gap * (i + 1))
+        DrawingUtil.drawBoomerangCircles(context, scale, size, w)
+        context.restore()
+    }
+}
+
 class Stage {
 
     canvas : HTMLCanvasElement = document.createElement('canvas')
